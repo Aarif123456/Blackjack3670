@@ -1,51 +1,71 @@
-
 /* 
-   A subclass of the Hand class that represents a hand of cards
-   in the game of Blackjack.  To the methods inherited form Hand,
-   it adds the method getBlackjackHand(), which returns the value
-   of the hand for the game of Blackjack. 
+  Class that handles the card in players hand
 */
 
-public class BlackjackHand extends Hand {
- 
-     public int getBlackjackValue() {
-            // Returns the value of this hand for the
-            // game of Blackjack.
+import java.util.*;
+public class BlackjackHand {
+    LinkedList<Card> hand;
+  public  BlackjackHand(){ //constructor for blackjack
+    hand = new LinkedList<Card>();
+  }
 
-         int val;      // The value computed for the hand.
-         boolean ace;  // This will be set to true if the
-                       //   hand contains an ace.
-         int cards;    // Number of cards in the hand.
+  public int getBlackjackValue() {
+  // Returns the value of this hand 
+  int val = 0; //total value of cards in hand
+  int hasAce = false;
 
-         val = 0;
-         ace = false;
-         cards = getCardCount();
+  for ( Card card : hand ) {
+     if (card.isAce()){
+         hasAce = true;     // player has atleast one ace
+     }
+     val += card.getValue(); 
+  }
+     /* Handle case for aces. Aces can be worth 1 or 11. 2 Aces at 11 is 22, which 
+     is a bust. So, we can only have one Ace be worth 11. And, ace will only be worth 
+     11 if the total value of the hand will be less than 21*/
 
-         for ( int i = 0;  i < cards;  i++ ) {
-                 // Add the value of the i-th card in the hand.
-             Card card;    // The i-th card; 
-             int cardVal;  // The blackjack value of the i-th card.
-             card = getCard(i);
-             cardVal = card.getValue();  // The normal value, 1 to 13.
-             if (cardVal > 10) {
-                 cardVal = 10;   // For a Jack, Queen, or King.
-             }
-             if (cardVal == 1) {
-                 ace = true;     // There is at least one ace.
-             }
-             val = val + cardVal;
-          }
+  if ( hasAce  &&  val + 10 <= 21 )
+    val +=10;
 
-             // Now, val is the value of the hand, counting any ace as 1.
-             // If there is an ace, and if changing its value from 1 to 
-             // 11 would leave the score less than or equal to 21,
-             // then do so by adding the extra 10 points to val. 
+  return val;
 
-          if ( ace == true  &&  val + 10 <= 21 )
-              val = val + 10;
+  }  
 
-          return val;
+  public void clear() {
+      // Discard all the cards from the hand.
+      hand.clear();
+   }
+   
+   public void addCard(Card c) { //add card to hand
+      hand.add(c);
+   }
+   
+   public void removeCard(Card c) {// remove specified card from hand
+      if(c!=null)
+        hand.remove(c); //remove card if it exists
+   }
+   
+   public void removeCard(int position) {
+         // remove card at give position
+      if (position >= 0 && position < hand.size())
+         hand.remove(position);
+      else
+        System.out.println("ERROR:Cannot remove card at position"+position);
+   }
+   
+   public int getCardCount() {
+      // Return the how many card the player has in their hands.
+      return hand.size();
+   }
+   
+   public Card getCard(int position) {
+          // Get the card using position
+      if (position >= 0 && position < hand.size())
+        return (Card)hand.get(position);
+      else{
+        System.out.println("ERROR:Cannot retrieve card at position"+position);
+        return null;
+      }
+   }
 
-     }  // end getBlackjackValue()
- 
-} // end class BlackjackHand
+} 
